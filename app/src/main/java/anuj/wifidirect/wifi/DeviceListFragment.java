@@ -19,10 +19,12 @@ package anuj.wifidirect.wifi;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Activity;
 import android.app.ListFragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
@@ -35,6 +37,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import anuj.wifidirect.*;
 
@@ -44,10 +47,15 @@ import anuj.wifidirect.*;
  */
 public class DeviceListFragment extends ListFragment implements PeerListListener {
 
+
+
+
     private List<WifiP2pDevice> peers = new ArrayList<WifiP2pDevice>();
+    //private List<WifiP2pDevice> Grouppeers = new ArrayList<WifiP2pDevice>();   //创建一个列表
     ProgressDialog progressDialog = null;
     View mContentView = null;
     private WifiP2pDevice device;
+    public Intent intent1;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -154,6 +162,24 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
         view.setText(getDeviceStatus(device.status));
     }
 
+
+
+
+
+    private MyListener myListener;//②作为属性定义
+    //①定义回调接口
+    public interface MyListener{
+        public void sendContent(ArrayList array);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        myListener = (MyListener) getActivity();
+    }
+
+
+
     @Override
     public void onPeersAvailable(WifiP2pDeviceList peerList) {
         if (progressDialog != null && progressDialog.isShowing()) {
@@ -161,7 +187,35 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
         }
         peers.clear();
         peers.addAll(peerList.getDeviceList());
+
+        String[] GroupArray = new String[10];
+        ArrayList array = new ArrayList();
+        int i=0;
+        for (WifiP2pDevice groupdevice:peerList.getDeviceList())
+        {GroupArray[i++]=groupdevice.deviceName;
+        array.add(groupdevice.deviceName);}
+
+         //myListener.sendContent(GroupArray);//将内容进行回传
+        myListener.sendContent(array);
+
         ((WiFiPeerListAdapter) getListAdapter()).notifyDataSetChanged();
+
+//        intent1=new Intent();
+//        intent1.setClass(getActivity(), WiFiDirectActivity.class);
+//        Bundle bundle=new Bundle();
+//        bundle.putStringArray("value",GroupArray);
+//        intent1.putExtras(bundle);
+//        Toast.makeText(getActivity(),
+//                "device 列表" ,
+//                Toast.LENGTH_SHORT).show();
+//        startActivity(intent1);
+
+
+
+        if (peers.size() == 2) {
+            Log.d(WiFiDirectActivity.TAG, "2 devices found");
+            return;
+        }
         if (peers.size() == 0) {
             Log.d(WiFiDirectActivity.TAG, "No devices found");
             return;
@@ -173,6 +227,16 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
         peers.clear();
         ((WiFiPeerListAdapter) getListAdapter()).notifyDataSetChanged();
     }
+
+    /*public void GetGroupPeers(WifiP2pDeviceList peerList)//只能放在这个implements PeerListListener的地方orz
+    {
+        //弹出列表进行选择
+        Grouppeers.addAll(peerList.getDeviceList());
+
+    } */
+
+
+
 
     /**
      * 

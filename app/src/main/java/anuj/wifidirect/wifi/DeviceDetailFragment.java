@@ -244,9 +244,14 @@ public class DeviceDetailFragment extends android.support.v4.app.Fragment implem
         else {
             CommonMethods.DisplayToast(getActivity(), "Host Address not found");
         }
+
         // After the group negotiation, we assign the group owner as the file
         // server. The file server is single threaded, single connection server
         // socket.
+
+
+
+
         try {
             String GroupOwner = info.groupOwnerAddress.getHostAddress();
             if (GroupOwner != null && !GroupOwner.equals(""))
@@ -262,7 +267,7 @@ public class DeviceDetailFragment extends android.support.v4.app.Fragment implem
 
             if (info.groupFormed && info.isGroupOwner) {
             /*
-             * set shaerdprefrence which remember that device is server.
+             * set sharedprefrence which remember that device is server.
         	 */
                 SharedPreferencesHandler.setStringValues(getActivity(),
                         getString(R.string.pref_ServerBoolean), "true");

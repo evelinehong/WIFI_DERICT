@@ -11,5 +11,15 @@
         android:id="@+id/atn_direct_discover"
         android:icon="@drawable/ic_action_discover"
         android:title="@string/discover_peers_button"
-        android:showAsAction="always" />
+        android:showAsAction="always"/>
+    <item
+        android:id="@+id/group"
+        android:icon="@drawable/ic_action_discover"
+        android:title="@string/group_information"
+        android:showAsAction="always"/>
+    <item
+        android:id="@+id/formGroup"
+        android:icon="@drawable/ic_action_discover"
+        android:title="@string/Form_Group"
+        android:showAsAction="always"/>
 </menu>

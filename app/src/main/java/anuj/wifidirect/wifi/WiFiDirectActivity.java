@@ -16,16 +16,21 @@
 
 package anuj.wifidirect.wifi;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
+import android.net.wifi.p2p.WifiP2pDeviceList;
+import android.net.wifi.p2p.WifiP2pGroup;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.ActionListener;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.net.wifi.p2p.WifiP2pManager.ChannelListener;
+import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
@@ -35,12 +40,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.widget.Toast;
+import java.lang.String;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import anuj.wifidirect.R;
@@ -53,7 +61,7 @@ import anuj.wifidirect.utils.PermissionsAndroid;
  * The application should also register a BroadcastReceiver for notification of
  * WiFi state related events.
  */
-public class WiFiDirectActivity extends AppCompatActivity implements ChannelListener, DeviceListFragment.DeviceActionListener {
+public class WiFiDirectActivity extends AppCompatActivity implements ChannelListener, DeviceListFragment.DeviceActionListener, DeviceListFragment.MyListener {
 
 
     private Toolbar mToolbar;
@@ -65,7 +73,11 @@ public class WiFiDirectActivity extends AppCompatActivity implements ChannelList
     private final IntentFilter intentFilter = new IntentFilter();
     private Channel channel;
     private BroadcastReceiver receiver = null;
-
+    private FragmentManager fragmanager;
+    private FragmentTransaction transaction;
+    private ArrayList GroupArray;
+    private String[] array;
+    WifiP2pDeviceList peerList;
     /**
      * @param isWifiP2pEnabled the isWifiP2pEnabled to set
      */
@@ -78,9 +90,9 @@ public class WiFiDirectActivity extends AppCompatActivity implements ChannelList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         initViews();
-        AdView mAdView = (AdView) findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
+        //AdView mAdView = (AdView) findViewById(R.id.adView);
+        //AdRequest adRequest = new AdRequest.Builder().build();
+        //mAdView.loadAd(adRequest);
 
         checkStoragePermission();
     }
@@ -107,6 +119,7 @@ public class WiFiDirectActivity extends AppCompatActivity implements ChannelList
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
         manager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
+        //获取 WifiP2pManager对象并在下一步初始化
         channel = manager.initialize(this, getMainLooper(), this);
     }
 
@@ -195,10 +208,126 @@ public class WiFiDirectActivity extends AppCompatActivity implements ChannelList
                     }
                 });
                 return true;
+            case R.id.group:
+                //显示组名、组员
+                //生成组名，组的列表
+                final ArrayList List = new ArrayList();//不知道为什么要加final
+                manager.requestGroupInfo(channel, new WifiP2pManager.GroupInfoListener() {
+                    @Override
+                    public void onGroupInfoAvailable(WifiP2pGroup group) {
+                        // String groupPassword = group.getPassphrase(); //只有owner才是有password的
+
+
+                        String groupMember = group.getClientList().toString();//可以获得连接到group的member列表
+                        String name = group.getNetworkName();//可以获得group的wifi热点名称（SSID）
+
+                        List.add(name);
+                        //Toast.makeText(WiFiDirectActivity.this, "group information "+name,
+                              //  Toast.LENGTH_SHORT).show();
+                        //Log.d(TAG, "group information" + name);
+                        List.add(group.getOwner().deviceName);
+                        //for (int i = 0; i < group.getClientList().size(); i++) {
+                        for (WifiP2pDevice groupdevice:group.getClientList())
+                        {
+                            List.add(groupdevice.deviceName);//懵逼不知道怎么传东西
+                            //Toast.makeText(WiFiDirectActivity.this, "group information "+ group.getClientList().toArray()[i],
+                                  //  Toast.LENGTH_SHORT).show();
+                        }
+                        int size=List.size();
+                        String[] array = (String[])List.toArray(new String[size]);
+                        Toast.makeText(WiFiDirectActivity.this, array[1]+" and "+array[0] + "and"+size,
+                                Toast.LENGTH_SHORT).show();
+
+                       final GroupListFragment fragmentgroup = (GroupListFragment) getFragmentManager().findFragmentById(R.id.frag_group);
+                       fragmentgroup.ShowGroupInfromation(array);
+//
+//                        //创建一个list，第一个存放owner的name，后面放成员的device
+//                        //发送消息给成员，并且使他们相连
+//                        //groupname存放在自己的group列表中，点击可以查看list
+//
+//                        //Toast.makeText(WiFiDirectActivity.this, name+' '+groupMember,
+//                        //      Toast.LENGTH_SHORT).show();
+//
+//
+//                           /* HashMap<String, String> map = new HashMap<String, String>();
+//                            map.put("name", name);
+//                            map.put("address", groupPassword);
+//                            peersshow.add(map);
+//
+//                            mAdapter = new MyAdapter(peersshow);
+//                            mRecyclerView.setAdapter(mAdapter);
+//                            mRecyclerView.setLayoutManager(new LinearLayoutManager
+//                                    (MainActivity.this));*/
+                   }
+                });
+
+//
+//
+                //fragmentgroup.ShowGroupInfromation(List);
+
+                //GroupListFragment frag1 = new GroupListFragment();
+                //ListFragmentSelf frgSelf = new ListFragmentSelf();
+
+                //transaction.add(R.id.fragment2, frgSelf, "frgSelf");
+
+                return true;
+
+            case R.id.formGroup:
+                //创建组
+                //跳出选项菜单
+
+//                final GroupFragment fragmentgroupdetail = (GroupFragment) getSupportFragmentManager()
+//                        .findFragmentById(R.id.frag_groupdetail);
+                Bundle bundle = new Bundle();//传递数据
+                //int i=0;
+                //GroupArray = new String[10];
+               // GroupArray[0]="and";
+               // for (WifiP2pDevice groupdevice:peerList.getDeviceList())
+                 //   GroupArray[i++]=groupdevice.deviceName;
+                bundle.putStringArrayList("DATA",GroupArray);//这里的values就是我们要传的member的数据
+                //bundle.putString("DATA",GroupArray[0]);
+                //Toast.makeText(WiFiDirectActivity.this, "GroupArray[0]" + GroupArray[0],
+                  //      Toast.LENGTH_SHORT).show();
+                GroupFragment fragmentgroupdetail = new GroupFragment();
+                fragmentgroupdetail.setArguments(bundle);
+                fragmanager = getFragmentManager();
+                transaction = fragmanager.beginTransaction();
+                transaction.add(R.id.frag_groupdetail, fragmentgroupdetail, "frag1");
+                transaction.commit();
+                //fragmentgroupdetail.test();
+                //fragmentgroup.GetGroupPeers(peerlist);
+
+                //选peerlist的列表
+
+                //生成group的信息
+                //private List<WifiP2pDevice> Grouppeers = new ArrayList<WifiP2pDevice>();   //创建一个列表
+                //传入一个组名 string——groupname
+               // GroupName=groupname;
+               // Grouppeers.addAll(peerList.getDeviceList());
+
+
+
+
+                //连接
+                //发送信息
+
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    public String putString()
+    {
+        return "hello";
+//        return GroupArray;
+    }
+
+    public void sendContent(ArrayList array) {
+        GroupArray = array;
+        Toast.makeText(WiFiDirectActivity.this, "sendcontect"+GroupArray.get(0), Toast.LENGTH_SHORT).show();
+    }
+
+
 
     @Override
     public void showDetails(WifiP2pDevice device) {
@@ -297,6 +426,7 @@ public class WiFiDirectActivity extends AppCompatActivity implements ChannelList
         }
 
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

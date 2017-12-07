@@ -24,6 +24,8 @@
     <string name="p2p_off_warning">Enable P2P from action bar button above or system settings</string>
     <string name="group_owner_text">"Am I the Group Owner? "</string>
     <string name="label_me">ME</string>
+    <string name="group_information">Group information</string>
+    <string name="Form_Group">Form a Group</string>
     <string name="label_peers">PEERS</string>
 
 </resources>

@@ -7,8 +7,7 @@
 
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/adView">
+        android:layout_height="match_parent">
 
         <include layout="@layout/toolbar" />
 
@@ -25,33 +24,37 @@
                 android:layout_height="match_parent"
                 android:layout_alignParentTop="true"
                 android:orientation="vertical">
-
                 <fragment
                     android:id="@+id/frag_list"
                     class="anuj.wifidirect.wifi.DeviceListFragment"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="160dp">
                     <!-- Preview: layout=@layout/row_devices -->
                 </fragment>
-
                 <fragment
                     android:id="@+id/frag_detail"
                     class="anuj.wifidirect.wifi.DeviceDetailFragment"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="150dp">
                     <!-- Preview: layout=@layout/device_detail -->
+                </fragment>
+                <fragment
+                    android:id="@+id/frag_group"
+                    class="anuj.wifidirect.wifi.GroupListFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp">
+                    <!-- Preview: layout=@layout/group_list??? -->
+                </fragment>
+                <fragment
+                    android:id="@+id/frag_groupdetail"
+                    class="anuj.wifidirect.wifi.GroupFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <!-- Preview: layout=@layout/group_detail -->
                 </fragment>
             </LinearLayout>
         </android.support.v4.widget.NestedScrollView>
 
     </android.support.design.widget.CoordinatorLayout>
 
-    <com.google.android.gms.ads.AdView
-        android:id="@+id/adView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        ads:adSize="BANNER"
-        ads:adUnitId="@string/banner_ad_unit_id"></com.google.android.gms.ads.AdView>
 </RelativeLayout>

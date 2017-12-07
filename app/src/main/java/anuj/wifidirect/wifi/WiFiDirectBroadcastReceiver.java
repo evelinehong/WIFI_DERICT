@@ -26,6 +26,8 @@ import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.net.wifi.p2p.WifiP2pManager.PeerListListener;
 import android.util.Log;
 
+import java.util.ArrayList;
+
 import anuj.wifidirect.*;
 
 /**
@@ -59,7 +61,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
         if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action)) {
-
+            // 指示Wi-Fi P2P是否开启或设备是否支持Wi-Fi Direct
             // UI update to indicate wifi p2p status.
             int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
             if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
@@ -72,7 +74,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
             }
             Log.d(WiFiDirectActivity.TAG, "P2P state changed - " + state);
         } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
-
+            // 代表对等节点(peer)列表发生了变化
             // request available peers from the wifi p2p manager. This is an
             // asynchronous call and the calling activity is notified with a
             // callback on PeerListListener.onPeersAvailable()
@@ -86,6 +88,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
             if (manager == null) {
                 return;
             }
+
 
             NetworkInfo networkInfo = (NetworkInfo) intent
                     .getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
