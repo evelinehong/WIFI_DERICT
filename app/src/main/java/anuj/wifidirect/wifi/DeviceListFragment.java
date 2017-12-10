@@ -191,25 +191,15 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
         String[] GroupArray = new String[10];
         ArrayList array = new ArrayList();
         int i=0;
+        //获得当前的peer列表，存在array中
         for (WifiP2pDevice groupdevice:peerList.getDeviceList())
-        {GroupArray[i++]=groupdevice.deviceName;
-        array.add(groupdevice.deviceName);}
-
-         //myListener.sendContent(GroupArray);//将内容进行回传
-        myListener.sendContent(array);
+        {
+            //GroupArray[i++]=groupdevice.deviceName;
+            array.add(groupdevice.deviceName);
+        }
+        myListener.sendContent(array);//传给主Activity目前的peer列表
 
         ((WiFiPeerListAdapter) getListAdapter()).notifyDataSetChanged();
-
-//        intent1=new Intent();
-//        intent1.setClass(getActivity(), WiFiDirectActivity.class);
-//        Bundle bundle=new Bundle();
-//        bundle.putStringArray("value",GroupArray);
-//        intent1.putExtras(bundle);
-//        Toast.makeText(getActivity(),
-//                "device 列表" ,
-//                Toast.LENGTH_SHORT).show();
-//        startActivity(intent1);
-
 
 
         if (peers.size() == 2) {

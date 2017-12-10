@@ -16,10 +16,12 @@
 
 package anuj.wifidirect.wifi;
 
+import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.p2p.WifiP2pConfig;
@@ -49,6 +51,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import anuj.wifidirect.R;
@@ -76,8 +79,16 @@ public class WiFiDirectActivity extends AppCompatActivity implements ChannelList
     private FragmentManager fragmanager;
     private FragmentTransaction transaction;
     private ArrayList GroupArray;
+    private ArrayList device;
+    private ArrayList wholeDevice;
     private String[] array;
+    private ArrayList groupList;
     WifiP2pDeviceList peerList;
+    private String[] dialogName;
+    private String groupName;
+    private int groupListNum;
+    private ArrayList<ArrayList> groupDevice;
+
     /**
      * @param isWifiP2pEnabled the isWifiP2pEnabled to set
      */
@@ -89,6 +100,9 @@ public class WiFiDirectActivity extends AppCompatActivity implements ChannelList
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        groupList = new ArrayList();//初始化存放groupList的列表（用来放name？)
+        groupListNum=0;
+        groupDevice = new ArrayList();
         initViews();
         //AdView mAdView = (AdView) findViewById(R.id.adView);
         //AdRequest adRequest = new AdRequest.Builder().build();
@@ -273,11 +287,94 @@ public class WiFiDirectActivity extends AppCompatActivity implements ChannelList
                 return true;
 
             case R.id.formGroup:
+                wholeDevice=GroupArray;
+//                wholeDevice = new ArrayList();
+//                wholeDevice.add("phone1");
+//                wholeDevice.add("phone2");
+//                wholeDevice.add("phone3");
+                //单击formGroup生成dailogs，来进行选择
+                //int len=//Device的数目
+                //wholedevice含当前所有的device的数组
+                int len=wholeDevice.size();
+                dialogName = new String[len]; //orz姐姐记得初始化啊！
+                device = new ArrayList();//存放选择的device名字
+                boolean isChecked[] = new boolean[len];
+                //对数组初始化
+                Iterator itname=wholeDevice.iterator();
+                for (int i=0;i<len;i++) {
+                    isChecked[i] = false;
+                    dialogName[i] = itname.next().toString();
+                }
+                AlertDialog.Builder builder = new AlertDialog.Builder(WiFiDirectActivity.this);
+                AlertDialog dialog =builder.setTitle("Group member挑选")//标题栏
+                      .setMultiChoiceItems(
+                            dialogName,
+                              //new String[] {"phone1","phone2","phone3"},//device名字列表，
+                    isChecked,
+                    new DialogInterface.OnMultiChoiceClickListener(){
+                        @Override
+                        public void onClick(
+                                DialogInterface dialog,int which,boolean isChecked){
+                            if (isChecked){
+                                device.add(wholeDevice.get(which));
+                                Iterator iter = device.iterator();
+                                while (iter.hasNext()){
+                                Toast.makeText(WiFiDirectActivity.this, iter.next().toString(),
+                                        Toast.LENGTH_SHORT).show();}
+                            }
+//                            else
+//                            {
+//                                  //可以再加一点鲁棒性，现在一个按钮按来按去会加多次
+//                            }
+                        }
+                    })
+                        .setPositiveButton("确定",//positiveButton即确定按钮，negativeButton为取消按钮
+                                           new DialogInterface.OnClickListener() {//对确定按钮的点击事件进行设置于处理
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                            int which){
+                                groupListNum += 1;
+                                groupName="Group"+String.valueOf(groupListNum);
+                                groupList.add(groupName);//在列表中加入GroupList
+                                groupDevice.add(device);
+                                dialog.dismiss();
+                                Toast.makeText(WiFiDirectActivity.this, "确定",
+                                        Toast.LENGTH_SHORT).show();
+                                for (ArrayList array:groupDevice)
+                                    for (Object devicename:array)//神之Object
+                                Toast.makeText(WiFiDirectActivity.this, devicename.toString(),
+                                        Toast.LENGTH_SHORT).show();
+//                                Iterator itergroup = groupDevice.iterator();
+//                                while (itergroup.hasNext())
+//                                {
+//                                    Iterator iterdevice = itergroup.next().iterator()
+//                                }
+                            }
+                            }
+                        ).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                                int which) {
+                                dialog.dismiss();
+                            }
+                        }
+                ).create();
+                dialog.show();
+
+
+                //新部分结束
+
+
+
+
+
+
                 //创建组
                 //跳出选项菜单
 
 //                final GroupFragment fragmentgroupdetail = (GroupFragment) getSupportFragmentManager()
 //                        .findFragmentById(R.id.frag_groupdetail);
+
                 Bundle bundle = new Bundle();//传递数据
                 //int i=0;
                 //GroupArray = new String[10];
@@ -322,7 +419,7 @@ public class WiFiDirectActivity extends AppCompatActivity implements ChannelList
 //        return GroupArray;
     }
 
-    public void sendContent(ArrayList array) {
+    public void sendContent(ArrayList array) {//接受从DeviceListFragment中传出的内容(目前传的是device名字列表），将列表存在了GroupArray这个ArrayList中
         GroupArray = array;
         Toast.makeText(WiFiDirectActivity.this, "sendcontect"+GroupArray.get(0), Toast.LENGTH_SHORT).show();
     }
