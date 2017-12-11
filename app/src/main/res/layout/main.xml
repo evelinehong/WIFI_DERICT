@@ -9,51 +9,61 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <include layout="@layout/toolbar" />
-
-        <android.support.v4.widget.NestedScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/margin_8"
-            android:layout_marginRight="@dimen/margin_8"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
             <LinearLayout
                 android:id="@+id/linearLayout1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_alignParentTop="true"
+                android:layout_alignParentTop="false"
                 android:orientation="vertical">
+
+                <include
+                    layout="@layout/toolbar"
+                    android:layout_width="match_parent" />
+
                 <fragment
                     android:id="@+id/frag_list"
                     class="anuj.wifidirect.wifi.DeviceListFragment"
                     android:layout_width="match_parent"
-                    android:layout_height="160dp">
+                    android:layout_height="200dp"
+                    android:layout_marginLeft="@dimen/margin_8"
+                    android:layout_marginRight="@dimen/margin_8">
                     <!-- Preview: layout=@layout/row_devices -->
                 </fragment>
+
                 <fragment
                     android:id="@+id/frag_detail"
                     class="anuj.wifidirect.wifi.DeviceDetailFragment"
                     android:layout_width="match_parent"
-                    android:layout_height="150dp">
+                    android:layout_height="150dp"
+                    android:layout_marginLeft="@dimen/margin_8"
+                    android:layout_marginRight="@dimen/margin_8">
                     <!-- Preview: layout=@layout/device_detail -->
                 </fragment>
-                <fragment
-                    android:id="@+id/frag_group"
-                    class="anuj.wifidirect.wifi.GroupListFragment"
+                <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="200dp">
-                    <!-- Preview: layout=@layout/group_list??? -->
-                </fragment>
-                <fragment
-                    android:id="@+id/frag_groupdetail"
-                    class="anuj.wifidirect.wifi.GroupFragment"
+                    android:layout_height="wrap_content"
+                    android:text="Group Information"
+                    android:textSize="20dp"
+                    android:layout_marginLeft="@dimen/margin_8"
+                    android:layout_marginRight="@dimen/margin_8"/>
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:gravity="center_vertical"
+                    android:background="@android:color/holo_blue_light"
+                    android:layout_marginLeft="@dimen/margin_8"
+                    android:layout_marginRight="@dimen/margin_8"/>
+                <ListView
+                    android:id="@+id/listView1"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-                    <!-- Preview: layout=@layout/group_detail -->
-                </fragment>
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_below="@id/frag_detail"
+                    android:layout_marginLeft="@dimen/margin_8"
+                    android:layout_marginRight="@dimen/margin_8">
+                </ListView>
             </LinearLayout>
-        </android.support.v4.widget.NestedScrollView>
+
 
     </android.support.design.widget.CoordinatorLayout>
 

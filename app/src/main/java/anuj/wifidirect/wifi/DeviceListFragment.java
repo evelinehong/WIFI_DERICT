@@ -169,7 +169,7 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
     private MyListener myListener;//②作为属性定义
     //①定义回调接口
     public interface MyListener{
-        public void sendContent(ArrayList array);
+        public void sendDevice(ArrayList arrayDevice);
     }
 
     @Override
@@ -188,28 +188,17 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
         peers.clear();
         peers.addAll(peerList.getDeviceList());
 
-        String[] GroupArray = new String[10];
-        ArrayList array = new ArrayList();
+        ArrayList arrayDevice = new ArrayList();
         int i=0;
         //获得当前的peer列表，存在array中
         for (WifiP2pDevice groupdevice:peerList.getDeviceList())
         {
-            //GroupArray[i++]=groupdevice.deviceName;
-            array.add(groupdevice.deviceName);
+            arrayDevice.add(groupdevice);
         }
-        myListener.sendContent(array);//传给主Activity目前的peer列表
+        myListener.sendDevice(arrayDevice);
 
         ((WiFiPeerListAdapter) getListAdapter()).notifyDataSetChanged();
 
-
-        if (peers.size() == 2) {
-            Log.d(WiFiDirectActivity.TAG, "2 devices found");
-            return;
-        }
-        if (peers.size() == 0) {
-            Log.d(WiFiDirectActivity.TAG, "No devices found");
-            return;
-        }
 
     }
 
@@ -218,12 +207,6 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
         ((WiFiPeerListAdapter) getListAdapter()).notifyDataSetChanged();
     }
 
-    /*public void GetGroupPeers(WifiP2pDeviceList peerList)//只能放在这个implements PeerListListener的地方orz
-    {
-        //弹出列表进行选择
-        Grouppeers.addAll(peerList.getDeviceList());
-
-    } */
 
 
 
